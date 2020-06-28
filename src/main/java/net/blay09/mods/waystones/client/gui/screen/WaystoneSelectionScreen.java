@@ -1,5 +1,6 @@
 package net.blay09.mods.waystones.client.gui.screen;
 
+import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.systems.RenderSystem;
 import net.blay09.mods.waystones.api.IWaystone;
 import net.blay09.mods.waystones.client.gui.widget.ITooltipProvider;
@@ -29,6 +30,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TextFormatting;
+import net.minecraft.util.text.TranslationTextComponent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -58,51 +60,51 @@ public class WaystoneSelectionScreen extends ContainerScreen<WaystoneSelectionCo
     }
 
     @Override
-    public void init() {
-        final int maxContentHeight = (int) (height * 0.6f);
+    public void func_231160_c_() {
+        final int maxContentHeight = (int) (field_230709_l_ * 0.6f);
         final int maxButtonsPerPage = (maxContentHeight - headerHeight - footerHeight) / entryHeight;
         buttonsPerPage = Math.max(4, Math.min(maxButtonsPerPage, waystones.size()));
         final int contentHeight = headerHeight + buttonsPerPage * entryHeight + footerHeight;
 
         // Leave no space for JEI!
-        xSize = width;
+        xSize = field_230708_k_;
         ySize = contentHeight;
 
-        super.init();
+        super.func_231160_c_();
 
         tooltipProviders.clear();
-        btnPrevPage = new Button(width / 2 - 100, height / 2 + 40, 95, 20, I18n.format("gui.waystones.waystone_selection.previous_page"), button -> {
-            pageOffset = Screen.hasShiftDown() ? 0 : pageOffset - 1;
+        btnPrevPage = new Button(field_230708_k_ / 2 - 100, field_230709_l_ / 2 + 40, 95, 20, new TranslationTextComponent("gui.waystones.waystone_selection.previous_page"), button -> {
+            pageOffset = Screen.func_231173_s_() ? 0 : pageOffset - 1;
             updateList();
         });
-        addButton(btnPrevPage);
+        func_230480_a_(btnPrevPage);
 
-        btnNextPage = new Button(width / 2 + 5, height / 2 + 40, 95, 20, I18n.format("gui.waystones.waystone_selection.next_page"), button -> {
-            pageOffset = Screen.hasShiftDown() ? (waystones.size() - 1) / buttonsPerPage : pageOffset + 1;
+        btnNextPage = new Button(field_230708_k_ / 2 + 5, field_230709_l_ / 2 + 40, 95, 20, new TranslationTextComponent("gui.waystones.waystone_selection.next_page"), button -> {
+            pageOffset = Screen.func_231173_s_() ? (waystones.size() - 1) / buttonsPerPage : pageOffset + 1;
             updateList();
         });
-        addButton(btnNextPage);
+        func_230480_a_(btnNextPage);
 
         updateList();
     }
 
     @Override
-    protected <T extends Widget> T addButton(T button) {
+    protected <T extends Widget> T func_230480_a_(T button) {
         if (button instanceof ITooltipProvider) {
             tooltipProviders.add((ITooltipProvider) button);
         }
-        return super.addButton(button);
+        return super.func_230480_a_(button);
     }
 
     private void updateList() {
         headerY = 0;
 
-        btnPrevPage.active = pageOffset > 0;
-        btnNextPage.active = pageOffset < (waystones.size() - 1) / buttonsPerPage;
+        btnPrevPage.field_230693_o_ = pageOffset > 0;
+        btnNextPage.field_230693_o_ = pageOffset < (waystones.size() - 1) / buttonsPerPage;
 
         tooltipProviders.clear();
-        buttons.removeIf(button -> button instanceof WaystoneButton || button instanceof SortWaystoneButton || button instanceof RemoveWaystoneButton);
-        children.removeIf(button -> button instanceof WaystoneButton || button instanceof SortWaystoneButton || button instanceof RemoveWaystoneButton);
+        field_230705_e_.removeIf(button -> button instanceof WaystoneButton || button instanceof SortWaystoneButton || button instanceof RemoveWaystoneButton);
+        field_230705_e_.removeIf(button -> button instanceof WaystoneButton || button instanceof SortWaystoneButton || button instanceof RemoveWaystoneButton);
 
         int y = guiTop + headerHeight + headerY;
         for (int i = 0; i < buttonsPerPage; i++) {
@@ -110,21 +112,21 @@ public class WaystoneSelectionScreen extends ContainerScreen<WaystoneSelectionCo
             if (entryIndex >= 0 && entryIndex < waystones.size()) {
                 IWaystone waystone = waystones.get(entryIndex);
 
-                addButton(createWaystoneButton(y, waystone));
+                func_230480_a_(createWaystoneButton(y, waystone));
 
-                SortWaystoneButton sortUpButton = new SortWaystoneButton(width / 2 + 108, y + 2, -1, y, 20, it -> sortWaystone(entryIndex, -1));
+                SortWaystoneButton sortUpButton = new SortWaystoneButton(field_230708_k_ / 2 + 108, y + 2, -1, y, 20, it -> sortWaystone(entryIndex, -1));
                 if (entryIndex == 0) {
-                    sortUpButton.active = false;
+                    sortUpButton.field_230693_o_ = false;
                 }
-                addButton(sortUpButton);
+                func_230480_a_(sortUpButton);
 
-                SortWaystoneButton sortDownButton = new SortWaystoneButton(width / 2 + 108, y + 13, 1, y, 20, it -> sortWaystone(entryIndex, 1));
+                SortWaystoneButton sortDownButton = new SortWaystoneButton(field_230708_k_ / 2 + 108, y + 13, 1, y, 20, it -> sortWaystone(entryIndex, 1));
                 if (entryIndex == waystones.size() - 1) {
-                    sortDownButton.active = false;
+                    sortDownButton.field_230693_o_ = false;
                 }
-                addButton(sortDownButton);
+                func_230480_a_(sortDownButton);
 
-                RemoveWaystoneButton removeButton = new RemoveWaystoneButton(width / 2 + 122, y + 4, y, 20, button -> {
+                RemoveWaystoneButton removeButton = new RemoveWaystoneButton(field_230708_k_ / 2 + 122, y + 4, y, 20, button -> {
                     PlayerEntity player = Minecraft.getInstance().player;
                     PlayerWaystoneManager.deactivateWaystone(Objects.requireNonNull(player), waystone);
                     NetworkHandler.channel.sendToServer(new RemoveWaystoneMessage(waystone));
@@ -132,22 +134,22 @@ public class WaystoneSelectionScreen extends ContainerScreen<WaystoneSelectionCo
                 });
                 // Only show the remove button for non-global waystones
                 if (!waystone.isGlobal()) {
-                    addButton(removeButton);
+                    func_230480_a_(removeButton);
                 }
 
                 y += 22;
             }
         }
 
-        btnPrevPage.y = guiTop + headerY + headerHeight + buttonsPerPage * 22 + (waystones.size() > 0 ? 10 : 0);
-        btnNextPage.y = guiTop + headerY + headerHeight + buttonsPerPage * 22 + (waystones.size() > 0 ? 10 : 0);
+        btnPrevPage.field_230691_m_ = guiTop + headerY + headerHeight + buttonsPerPage * 22 + (waystones.size() > 0 ? 10 : 0);
+        btnNextPage.field_230691_m_ = guiTop + headerY + headerHeight + buttonsPerPage * 22 + (waystones.size() > 0 ? 10 : 0);
     }
 
     private WaystoneButton createWaystoneButton(int y, IWaystone waystone) {
         IWaystone waystoneFrom = container.getWaystoneFrom();
-        WaystoneButton btnWaystone = new WaystoneButton(width / 2 - 100, y, waystone, container.getWarpMode(), button -> NetworkHandler.channel.sendToServer(new SelectWaystoneMessage(waystone)));
+        WaystoneButton btnWaystone = new WaystoneButton(field_230708_k_ / 2 - 100, y, waystone, container.getWarpMode(), button -> NetworkHandler.channel.sendToServer(new SelectWaystoneMessage(waystone)));
         if (waystoneFrom != null && waystone.getWaystoneUid().equals(waystoneFrom.getWaystoneUid())) {
-            btnWaystone.active = false;
+            btnWaystone.field_230693_o_ = false;
         }
         return btnWaystone;
     }
@@ -158,7 +160,7 @@ public class WaystoneSelectionScreen extends ContainerScreen<WaystoneSelectionCo
         }
 
         int otherIndex;
-        if (Screen.hasShiftDown()) {
+        if (Screen.func_231173_s_()) {
             otherIndex = sortDir == -1 ? -1 : waystones.size();
         } else {
             otherIndex = index + sortDir;
@@ -173,48 +175,56 @@ public class WaystoneSelectionScreen extends ContainerScreen<WaystoneSelectionCo
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
+    public boolean func_231044_a_(double mouseX, double mouseY, int mouseButton) {
         if (isLocationHeaderHovered && container.getWaystoneFrom() != null) {
             NetworkHandler.channel.sendToServer(new RequestEditWaystoneMessage(container.getWaystoneFrom()));
             return true;
         }
 
-        return super.mouseClicked(mouseX, mouseY, mouseButton);
+        return super.func_231044_a_(mouseX, mouseY, mouseButton);
     }
 
+    //render
     @Override
-    public void render(int mouseX, int mouseY, float partialTicks) {
-        renderBackground();
-        super.render(mouseX, mouseY, partialTicks);
-        renderHoveredToolTip(mouseX, mouseY);
+    public void func_230430_a_(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        //renderBackground
+        func_230446_a_(matrixStack);
+
+        super.func_230430_a_(matrixStack, mouseX, mouseY, partialTicks);
+
+        //renderHoveredToolTip
+        func_230459_a_(matrixStack, mouseX, mouseY);
         for (ITooltipProvider tooltipProvider : tooltipProviders) {
             if (tooltipProvider.shouldShowTooltip()) {
-                renderTooltip(tooltipProvider.getTooltip(), mouseX, mouseY);
+                func_238654_b_(matrixStack, tooltipProvider.getTooltip(), mouseX, mouseY);//renderTooltip
             }
         }
     }
 
     @Override
-    protected void drawGuiContainerBackgroundLayer(float partialTicks, int mouseX, int mouseY) {
+    protected void func_230450_a_(MatrixStack p_230450_1_, float partialTicks, int mouseX, int mouseY) {
     }
 
+    //drawGuiContainerForegroundLayer
     @Override
-    protected void drawGuiContainerForegroundLayer(int mouseX, int mouseY) {
+    protected void func_230451_b_(MatrixStack matrixStack, int mouseX, int mouseY) {
         FontRenderer fontRenderer = Minecraft.getInstance().fontRenderer;
 
         RenderSystem.color4f(1f, 1f, 1f, 1f);
         IWaystone fromWaystone = container.getWaystoneFrom();
-        drawCenteredString(fontRenderer, getTitle().getFormattedText(), xSize / 2, headerY + (fromWaystone != null ? 20 : 0), 0xFFFFFF);
+        //drawCenteredString
+        func_238471_a_(matrixStack, fontRenderer, func_231171_q_().getString(), xSize / 2, headerY + (fromWaystone != null ? 20 : 0), 0xFFFFFF);
         if (fromWaystone != null) {
-            drawLocationHeader(fromWaystone, mouseX, mouseY, xSize / 2, headerY);
+            drawLocationHeader(matrixStack, fromWaystone, mouseX, mouseY, xSize / 2, headerY);
         }
 
         if (waystones.size() == 0) {
-            drawCenteredString(fontRenderer, TextFormatting.RED + I18n.format("gui.waystones.waystone_selection.no_waystones_activated"), xSize / 2, height / 2 - 20, 0xFFFFFF);
+            //drawCenteredString
+            func_238471_a_(matrixStack, fontRenderer, TextFormatting.RED + I18n.format("gui.waystones.waystone_selection.no_waystones_activated"), xSize / 2, field_230709_l_ / 2 - 20, 0xFFFFFF);
         }
     }
 
-    private void drawLocationHeader(IWaystone waystone, int mouseX, int mouseY, int x, int y) {
+    private void drawLocationHeader(MatrixStack matrixStack, IWaystone waystone, int mouseX, int mouseY, int x, int y) {
         FontRenderer fontRenderer = Minecraft.getInstance().fontRenderer;
 
         String locationPrefix = TextFormatting.YELLOW + I18n.format("gui.waystones.waystone_selection.current_location") + " ";
@@ -238,7 +248,7 @@ public class WaystoneSelectionScreen extends ContainerScreen<WaystoneSelectionCo
         }
         fullText += waystone.getName();
 
-        drawString(fontRenderer, TextFormatting.UNDERLINE + fullText, x - fullWidth / 2, y, 0xFFFFFF);
+        func_238476_c_(matrixStack, fontRenderer, TextFormatting.UNDERLINE + fullText, x - fullWidth / 2, y, 0xFFFFFF);
 
         if (isLocationHeaderHovered && waystoneEditPermissions == WaystoneEditPermissions.ALLOW) {
             RenderSystem.pushMatrix();

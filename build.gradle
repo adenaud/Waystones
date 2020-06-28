@@ -69,15 +69,11 @@ repositories {
 }
 
 dependencies {
-    minecraft([
-            group  : "${forge_group}",
-            name   : "forge",
-            version: "${minecraft_version}-${forge_version}"
-    ])
+    minecraft "${forge_group}:forge:${minecraft_version}-${forge_version}"
 
-    compileOnly "journeymap:journeymap:1.15.2:5.7.0beta1"
-    compileOnly fg.deobf("mezz.jei:jei-1.15.2:6.0.0.2:api")
-    runtimeOnly fg.deobf("mezz.jei:jei-1.15.2:6.0.0.2")
+    //compileOnly "journeymap:journeymap:1.15.2:5.7.0beta1"
+    compileOnly fg.deobf("mezz.jei:jei-1.16.1:7.0.0.2:api")
+    runtimeOnly fg.deobf("mezz.jei:jei-1.16.1:7.0.0.2")
 }
 
 // Example for how to get properties into the manifest for reading by the runtime..

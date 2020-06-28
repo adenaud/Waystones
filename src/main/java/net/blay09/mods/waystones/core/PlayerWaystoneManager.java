@@ -17,8 +17,11 @@ import net.minecraft.network.play.server.SPlayEntityEffectPacket;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.Direction;
+import net.minecraft.util.RegistryKey;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.registry.Registry;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraft.world.IBlockReader;
@@ -89,7 +92,7 @@ public class PlayerWaystoneManager {
 
     public static int getExperienceLevelCost(PlayerEntity player, IWaystone waystone, WarpMode warpMode) {
         boolean enableXPCost = !player.abilities.isCreativeMode;
-        if (waystone.getDimensionType() != player.world.getDimension().getType()) {
+        if (waystone.getDimensionType() != player.world.func_234922_V_()) {
             return enableXPCost ? WaystoneConfig.SERVER.dimensionalWarpXpCost.get() : 0;
         }
 
@@ -132,10 +135,10 @@ public class PlayerWaystoneManager {
             return false;
         }
 
-        boolean isDimensionalWarp = waystone.getDimensionType() != player.world.getDimension().getType();
+        boolean isDimensionalWarp = waystone.getDimensionType() != player.world.func_234922_V_();
         if (isDimensionalWarp && !canDimensionalWarpTo(player, waystone)) {
             TranslationTextComponent chatComponent = new TranslationTextComponent("chat.waystones.cannot_dimension_warp");
-            chatComponent.getStyle().setColor(TextFormatting.RED);
+            chatComponent.getStyle().func_240720_a_(TextFormatting.RED);
             player.sendStatusMessage(chatComponent, false);
             return false;
         }
@@ -193,13 +196,15 @@ public class PlayerWaystoneManager {
     }
 
     private static void teleportToWaystone(ServerPlayerEntity player, IWaystone waystone) {
-        BlockPos sourcePos = player.getPosition();
+        BlockPos sourcePos = player.func_233580_cy_();
         BlockPos pos = waystone.getPos();
         BlockPos targetPos;
         Direction targetDir;
 
         MinecraftServer server = player.getServer();
-        ServerWorld targetWorld = Objects.requireNonNull(server).getWorld(waystone.getDimensionType());
+        //ServerWorld targetWorld = Objects.requireNonNull(server).getWorld(waystone.getDimensionType());
+        String resourceName = waystone.getDimensionType().func_240901_a_().getPath();
+        ServerWorld targetWorld = Objects.requireNonNull(server).getWorld(RegistryKey.func_240903_a_(Registry.field_239699_ae_, new ResourceLocation(resourceName)));
         BlockState state = targetWorld.getBlockState(pos);
         if (state.getBlock() instanceof WaystoneBlock) {
             Direction direction = state.get(WaystoneBlock.FACING);

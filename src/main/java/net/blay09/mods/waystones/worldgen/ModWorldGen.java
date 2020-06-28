@@ -1,7 +1,5 @@
 package net.blay09.mods.waystones.worldgen;
 
-import com.google.common.collect.ImmutableList;
-import com.mojang.datafixers.util.Pair;
 import net.blay09.mods.waystones.block.ModBlocks;
 import net.blay09.mods.waystones.config.WaystoneConfig;
 import net.blay09.mods.waystones.config.WorldGenStyle;
@@ -13,8 +11,6 @@ import net.minecraft.world.gen.feature.Feature;
 import net.minecraft.world.gen.feature.NoFeatureConfig;
 import net.minecraft.world.gen.feature.jigsaw.JigsawManager;
 import net.minecraft.world.gen.feature.jigsaw.JigsawPattern;
-import net.minecraft.world.gen.feature.jigsaw.JigsawPiece;
-import net.minecraft.world.gen.feature.jigsaw.SingleJigsawPiece;
 import net.minecraft.world.gen.feature.structure.*;
 import net.minecraft.world.gen.placement.NoPlacementConfig;
 import net.minecraft.world.gen.placement.Placement;
@@ -38,15 +34,15 @@ public class ModWorldGen {
 
     public static void registerFeatures(IForgeRegistry<Feature<?>> registry) {
         registry.registerAll(
-                waystoneFeature = (WaystoneFeature) new WaystoneFeature(NoFeatureConfig::deserialize, ModBlocks.waystone.getDefaultState()).setRegistryName("waystone"),
-                mossyWaystoneFeature = (WaystoneFeature) new WaystoneFeature(NoFeatureConfig::deserialize, ModBlocks.mossyWaystone.getDefaultState()).setRegistryName("mossy_waystone"),
-                sandyWaystoneFeature = (WaystoneFeature) new WaystoneFeature(NoFeatureConfig::deserialize, ModBlocks.sandyWaystone.getDefaultState()).setRegistryName("sandy_waystone")
+                waystoneFeature = (WaystoneFeature) new WaystoneFeature(NoFeatureConfig.field_236558_a_, ModBlocks.waystone.getDefaultState()).setRegistryName("waystone"),
+                mossyWaystoneFeature = (WaystoneFeature) new WaystoneFeature(NoFeatureConfig.field_236558_a_, ModBlocks.mossyWaystone.getDefaultState()).setRegistryName("mossy_waystone"),
+                sandyWaystoneFeature = (WaystoneFeature) new WaystoneFeature(NoFeatureConfig.field_236558_a_, ModBlocks.sandyWaystone.getDefaultState()).setRegistryName("sandy_waystone")
         );
     }
 
     public static void registerPlacements(IForgeRegistry<Placement<?>> registry) {
         registry.registerAll(
-                waystonePlacement = (WaystonePlacement) new WaystonePlacement(NoPlacementConfig::deserialize).setRegistryName("waystone")
+                waystonePlacement = (WaystonePlacement) new WaystonePlacement(NoPlacementConfig.field_236555_a_).setRegistryName("waystone")
         );
     }
 
@@ -56,7 +52,7 @@ public class ModWorldGen {
                 WaystoneFeature feature = getWaystoneFeature(biome);
                 ConfiguredFeature<?, ?> configuredFeature = feature
                         .withConfiguration(NoFeatureConfig.NO_FEATURE_CONFIG)
-                        .func_227228_a_(waystonePlacement.func_227446_a_(NoPlacementConfig.NO_PLACEMENT_CONFIG));
+                        .withPlacement(waystonePlacement.configure(NoPlacementConfig.NO_PLACEMENT_CONFIG));
                 biome.addFeature(GenerationStage.Decoration.VEGETAL_DECORATION, configuredFeature);
             });
         }
@@ -104,8 +100,8 @@ public class ModWorldGen {
     private static void addWaystoneStructureToVillageConfig(String villagePiece, ResourceLocation waystoneStructure) {
         JigsawPattern houses = JigsawManager.REGISTRY.get(new ResourceLocation(villagePiece));
 
-        final SingleJigsawPiece piece = new SingleJigsawPiece(waystoneStructure.toString(), Collections.emptyList(), JigsawPattern.PlacementBehaviour.RIGID);
-        houses.field_214952_d = ImmutableList.<Pair<JigsawPiece, Integer>>builder().addAll(houses.field_214952_d).add(Pair.of(piece, 1)).build();
-        houses.jigsawPieces.add(piece);
+        //final SingleJigsawPiece piece = new SingleJigsawPiece(waystoneStructure.toString(), Collections.emptyList(), JigsawPattern.PlacementBehaviour.RIGID);
+        //houses.field_214952_d = ImmutableList.<Pair<JigsawPiece, Integer>>builder().addAll(houses.field_214952_d).add(Pair.of(piece, 1)).build();
+        //houses.jigsawPieces.add(piece);
     }
 }

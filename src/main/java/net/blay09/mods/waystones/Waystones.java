@@ -56,8 +56,8 @@ public class Waystones {
 
     @SubscribeEvent
     public static void setup(FMLCommonSetupEvent event) {
-        ModWorldGen.setupRandomWorldGen();
-        ModWorldGen.setupVillageWorldGen();
+        //ModWorldGen.setupRandomWorldGen();
+        //ModWorldGen.setupVillageWorldGen();
     }
 
     @SubscribeEvent

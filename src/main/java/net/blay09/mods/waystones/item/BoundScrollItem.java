@@ -63,7 +63,7 @@ public class BoundScrollItem extends Item implements IResetUseOnDamage, IFOVOnUs
         }
 
         if (entry != null) {
-            tagCompound.put("WaystonesBoundTo", NBTUtil.writeUniqueId(entry.getWaystoneUid()));
+            tagCompound.put("WaystonesBoundTo", NBTUtil.func_240626_a_(entry.getWaystoneUid()));
         } else {
             tagCompound.remove("WaystonesBoundTo");
         }
@@ -109,7 +109,7 @@ public class BoundScrollItem extends Item implements IResetUseOnDamage, IFOVOnUs
                 }
 
                 TranslationTextComponent chatComponent = new TranslationTextComponent("chat.waystones.scroll_bound", waystone.getName());
-                chatComponent.getStyle().setColor(TextFormatting.YELLOW);
+                chatComponent.getStyle().func_240720_a_(TextFormatting.YELLOW);
                 player.sendStatusMessage(chatComponent, true);
             }
 
@@ -157,7 +157,7 @@ public class BoundScrollItem extends Item implements IResetUseOnDamage, IFOVOnUs
             return new ActionResult<>(ActionResultType.SUCCESS, itemStack);
         } else {
             TranslationTextComponent chatComponent = new TranslationTextComponent("chat.waystones.scroll_not_yet_bound");
-            chatComponent.getStyle().setColor(TextFormatting.RED);
+            chatComponent.getStyle().func_240720_a_(TextFormatting.RED);
             player.sendStatusMessage(chatComponent, true);
             return new ActionResult<>(ActionResultType.FAIL, itemStack);
         }
@@ -175,11 +175,11 @@ public class BoundScrollItem extends Item implements IResetUseOnDamage, IFOVOnUs
         IWaystone boundTo = getBoundTo(player, itemStack);
         ITextComponent targetText = boundTo != null ? new StringTextComponent(boundTo.getName()) : new TranslationTextComponent("tooltip.waystones.bound_to_none");
         if (boundTo != null) {
-            targetText.getStyle().setColor(TextFormatting.AQUA);
+            targetText.getStyle().func_240720_a_(TextFormatting.AQUA);
         }
 
         TranslationTextComponent boundToText = new TranslationTextComponent("tooltip.waystones.bound_to", targetText);
-        boundToText.getStyle().setColor(TextFormatting.GRAY);
+        boundToText.getStyle().func_240720_a_(TextFormatting.GRAY);
         tooltip.add(boundToText);
     }
 
